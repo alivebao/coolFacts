@@ -94,3 +94,19 @@ def set_count():
         return make_err_response('count参数必须是数字')
     except Exception as e:
         return make_err_response(f'设置失败: {str(e)}')
+
+
+@app.route('/api/count/reset', methods=['POST'])
+def reset_count():
+    """
+    :return: 重置计数为0
+    """
+    try:
+        # 设置count值为0
+        set_counterbyid(1, 0)
+        
+        # 返回重置后的值
+        return make_succ_response(0)
+        
+    except Exception as e:
+        return make_err_response(f'重置失败: {str(e)}')
