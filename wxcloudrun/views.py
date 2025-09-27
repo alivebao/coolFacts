@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask import render_template, request
 from run import app
-from wxcloudrun.dao import delete_counterbyid, query_counterbyid, insert_counter, update_counterbyid
+from wxcloudrun.dao import delete_counterbyid, query_counterbyid, insert_counter, update_counterbyid, set_counterbyid
 from wxcloudrun.model import Counters
 from wxcloudrun.response import make_succ_empty_response, make_succ_response, make_err_response
 
@@ -64,3 +64,33 @@ def get_count():
     """
     counter = Counters.query.filter(Counters.id == 1).first()
     return make_succ_response(0) if counter is None else make_succ_response(counter.count)
+
+
+@app.route('/api/count/set', methods=['POST'])
+def set_count():
+    """
+    :return: 设置计数的值
+    """
+    # 获取请求体参数
+    params = request.get_json()
+    
+    # 检查count参数
+    if 'count' not in params:
+        return make_err_response('缺少count参数')
+    
+    try:
+        count_value = int(params['count'])
+        if count_value < 0:
+            return make_err_response('count值不能为负数')
+        
+        # 设置count值
+        set_counterbyid(1, count_value)
+        
+        # 返回设置后的值
+        counter = query_counterbyid(1)
+        return make_succ_response(counter.count if counter else 0)
+        
+    except ValueError:
+        return make_err_response('count参数必须是数字')
+    except Exception as e:
+        return make_err_response(f'设置失败: {str(e)}')

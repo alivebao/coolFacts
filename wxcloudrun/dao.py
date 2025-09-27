@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 
 from sqlalchemy.exc import OperationalError
 
@@ -62,3 +63,28 @@ def update_counterbyid(counter):
         db.session.commit()
     except OperationalError as e:
         logger.info("update_counterbyid errorMsg= {} ".format(e))
+
+
+def set_counterbyid(id, count_value):
+    """
+    根据ID设置counter的值
+    :param id: Counter的ID
+    :param count_value: 要设置的值
+    """
+    try:
+        counter = query_counterbyid(id)
+        if counter is None:
+            # 如果不存在，创建新的counter
+            counter = Counters()
+            counter.id = id
+            counter.count = count_value
+            counter.created_at = datetime.now()
+            counter.updated_at = datetime.now()
+            insert_counter(counter)
+        else:
+            # 如果存在，更新值
+            counter.count = count_value
+            counter.updated_at = datetime.now()
+            update_counterbyid(counter)
+    except OperationalError as e:
+        logger.info("set_counterbyid errorMsg= {} ".format(e))
