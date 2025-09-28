@@ -117,8 +117,17 @@ curl -X POST -H 'content-type: application/json' -d '{"action": "inc"}' https://
 - MYSQL_USERNAME
 以上三个变量的值请按实际情况填写。如果使用云托管内MySQL，可以在控制台MySQL页面获取相关信息。
 
+## docker 安装问题
+windows run build 可能失败。解决方案为：
+1. 要梯子
+2. PowerShell（管理员）执行：
+setx HTTP_PROXY http://127.0.0.1:4002
+setx HTTPS_PROXY http://127.0.0.1:4002
+写4002是因为clash port为4002
+3. 防火墙 -> 高级 -> 入站规则 看有没有把Docker服务阻拦了
+执行以上三步后可解决
 
-
+连接云DB没搞定，先用本地的了
 ## License
 
 [MIT](./LICENSE)
